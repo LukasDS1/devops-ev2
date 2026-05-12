@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  despacho-backend:
+    image: dockermasterluka/despachos-backend:${VERSION:-v1}
+    container_name: despacho-backend
+    ports:
+      - "8081:8081"
+    environment:
+      DB_ENDPOINT: db-despacho
+      DB_PORT: 3306
+      DB_NAME: despacho_db
+      DB_USERNAME: root
+      DB_PASSWORD: innovatech2025
+    depends_on:
+      db-despacho:
+        condition: service_healthy
+    restart: unless-stopped
+
+  ventas-backend:
+    image: dockermasterluka/ventas-backend:${VERSION:-v1}
+    container_name: ventas-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_ENDPOINT: db-ventas
+      DB_PORT: 3306
+      DB_NAME: ventas_db
+      DB_USERNAME: root
+      DB_PASSWORD: innovatech2025
+    depends_on:
+      db-ventas:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db-despacho:
+    image: mysql:8
+    container_name: mysql-despacho
+    environment:
+      MYSQL_ROOT_PASSWORD: innovatech2025
+      MYSQL_DATABASE: despacho_db
+    volumes:
+      - despacho-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pinnovatech2025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  db-ventas:
+    image: mysql:8
+    container_name: mysql-ventas
+    environment:
+      MYSQL_ROOT_PASSWORD: innovatech2025
+      MYSQL_DATABASE: ventas_db
+    volumes:
+      - ventas-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pinnovatech2025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  despacho-db-data:
+    driver: local
+  ventas-db-data:
+    driver: local
