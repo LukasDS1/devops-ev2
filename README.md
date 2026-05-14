@@ -1,4 +1,5 @@
-**=== Sistema de Despliegue Contenerizado en AWS EC2 ===**
+** Sistema de Despliegue Contenerizado en AWS EC2 **
+
 **Descripción del Proyecto:**
 
 Este proyecto se centra en  la contenedorización, automatización de despliegue y ejecución de una solución compuesta por Frontend y Backend para la empresa Innovatech Chile.
@@ -10,7 +11,7 @@ La solución implementa una arquitectura basada en microservicios desplegada sob
 - Backend de Ventas desarrollado en Spring Boot
 - Base de datos MySQL para Despcho
 - Base de datos MySQL para Ventas
-- 
+
 El objetivo principal fue automatizar completamente el proceso de construcción, publicación y despliegue de contenedores mediante un pipeline CI/CD activado desde GitHub Actions sobre la rama deploy.
 
 **Tecnologías Utilizadas:**
