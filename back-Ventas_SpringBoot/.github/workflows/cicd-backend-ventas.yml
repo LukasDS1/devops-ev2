@@ -1,11 +1,9 @@
 name: CI/CD - Ventas Backend
-
 on:
   push:
     branches: [deploy]
     paths:
       - 'back-Ventas_SpringBoot/**'
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -35,7 +33,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
           aws ssm send-command \
-            --instance-ids ${{ secrets.EC2_VENTAS_INSTANCE_ID }} \
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{"commands":[
               "docker pull dockermasterluka/ventas-backend:${{ steps.version.outputs.VERSION }}",

@@ -1,19 +1,6 @@
 version: '3.8'
-
 services:
-
-  frontend:
-    build: ./front_despacho
-    image: dockermasterluka/despacho-frontend:${VERSION:-v1}
-    container_name: frontend
-    ports:
-      - "80:80"
-    volumes:
-      - nginx-logs:/var/log/nginx
-    restart: unless-stopped
-
   despacho-backend:
-    build: ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
     image: dockermasterluka/despachos-backend:${VERSION:-v1}
     container_name: despacho-backend
     ports:
@@ -25,11 +12,11 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: innovatech2025
     depends_on:
-      - db-despacho
+      db-despacho:
+        condition: service_healthy
     restart: unless-stopped
 
   ventas-backend:
-    build: ./back-Ventas_SpringBoot/Springboot-API-REST
     image: dockermasterluka/ventas-backend:${VERSION:-v1}
     container_name: ventas-backend
     ports:
@@ -41,7 +28,8 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: innovatech2025
     depends_on:
-      - db-ventas
+      db-ventas:
+        condition: service_healthy
     restart: unless-stopped
 
   db-despacho:
@@ -52,6 +40,12 @@ services:
       MYSQL_DATABASE: despacho_db
     volumes:
       - despacho-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pinnovatech2025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
 
   db-ventas:
@@ -62,11 +56,15 @@ services:
       MYSQL_DATABASE: ventas_db
     volumes:
       - ventas-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pinnovatech2025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
 
 volumes:
-  nginx-logs:
-    driver: local
   despacho-db-data:
     driver: local
   ventas-db-data:
