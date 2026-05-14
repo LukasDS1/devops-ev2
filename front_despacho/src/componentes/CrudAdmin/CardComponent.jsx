@@ -1,7 +1,6 @@
 import React from "react";
 
-
-//TRIGGER TEST
+//TRIGGER TEST 2
 export const CardComponent = ({ title, description, buttonText, onClick }) => {
   return (
     <div className=" p-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-white mb-20 mr-10 h-full overflow-hidden">
