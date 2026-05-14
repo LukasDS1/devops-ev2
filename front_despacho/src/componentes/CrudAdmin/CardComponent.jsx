@@ -1,6 +1,5 @@
 import React from "react";
-
-//TRIGGER TEST 5
+//trigger test 10
 
 export const CardComponent = ({ title, description, buttonText, onClick }) => {
   return (
