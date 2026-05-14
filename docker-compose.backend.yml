@@ -42,10 +42,10 @@ services:
       - despacho-db-data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pinnovatech2025"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     restart: unless-stopped
 
   db-ventas:
@@ -58,10 +58,10 @@ services:
       - ventas-db-data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pinnovatech2025"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     restart: unless-stopped
 
 volumes:
