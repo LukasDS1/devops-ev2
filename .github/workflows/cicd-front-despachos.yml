@@ -1,12 +1,9 @@
 name: CI/CD - Despacho Frontend
-
-
 on:
   push:
     branches: [deploy]
     paths:
       - 'front_despacho/**'
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -42,5 +39,6 @@ jobs:
               "docker pull dockermasterluka/despacho-frontend:${{ steps.version.outputs.VERSION }}",
               "docker stop frontend || true",
               "docker rm frontend || true",
+              "[ ! -f /home/ec2-user/db.json ] && echo '\''{}'\'' > /home/ec2-user/db.json",
               "cd /home/ec2-user && VERSION=${{ steps.version.outputs.VERSION }} docker-compose -f docker-compose.frontend.yml up -d frontend"
             ]}'
