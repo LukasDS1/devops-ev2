@@ -4,11 +4,8 @@ services:
     image: dockermasterluka/despacho-frontend:${VERSION:-v1}
     container_name: frontend
     ports:
-      - "80:80"
+      - "80:3000"   
+      - "3001:3001"  
     volumes:
-      - nginx-logs:/var/log/nginx
+      - ./db.json:/app/db.json  # reemplaza el volumen de nginx-logs
     restart: unless-stopped
-
-volumes:
-  nginx-logs:
-    driver: local
