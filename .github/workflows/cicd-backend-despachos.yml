@@ -41,5 +41,5 @@ jobs:
               "docker pull dockermasterluka/despachos-backend:${{ steps.version.outputs.VERSION }}",
               "docker stop despacho-backend || true",
               "docker rm despacho-backend || true",
-              "cd /home/ec2-user && VERSION=${{ steps.version.outputs.VERSION }} docker-compose up -d despacho-backend"
+              ""cd /home/ec2-user && VERSION=${{ steps.version.outputs.VERSION }} docker-compose -f docker-compose.backend.yml up -d despacho-backend"
             ]}'
