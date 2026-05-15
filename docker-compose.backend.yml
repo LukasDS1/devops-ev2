@@ -69,3 +69,10 @@ volumes:
     driver: local
   ventas-db-data:
     driver: local
+
+
+
+
+
+
+    

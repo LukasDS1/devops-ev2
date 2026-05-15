@@ -1,6 +1,4 @@
 name: CI/CD - Despacho Backend
-#TRIGGER TEST
-
 on:
   push:
     branches: [deploy]
@@ -43,3 +41,5 @@ jobs:
               "docker rm despacho-backend || true",
               "cd /home/ec2-user && VERSION=${{ steps.version.outputs.VERSION }} docker-compose -f docker-compose.backend.yml up -d despacho-backend"
             ]}'
+
+            
