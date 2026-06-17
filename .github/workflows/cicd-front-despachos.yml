@@ -1,9 +1,11 @@
 name: CI/CD - Despacho Frontend
+
 on:
   push:
     branches: [deploy]
     paths:
       - 'front_despacho/**'
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -14,31 +16,40 @@ jobs:
         id: version
         run: echo "VERSION=v$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
 
-      - name: Login a Docker Hub
-        uses: docker/login-action@v3
+      - name: Configurar credenciales AWS
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login en Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build y Push imagen
-        run: |
-          docker build -t dockermasterluka/despacho-frontend:${{ steps.version.outputs.VERSION }} ./front_despacho
-          docker push dockermasterluka/despacho-frontend:${{ steps.version.outputs.VERSION }}
-
-      - name: Desplegar en EC2 via SSM
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO: despacho-frontend
         run: |
-          aws ssm send-command \
-            --instance-ids ${{ secrets.EC2_FRONTEND_INSTANCE_ID }} \
-            --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":[
-              "docker pull dockermasterluka/despacho-frontend:${{ steps.version.outputs.VERSION }}",
-              "docker stop frontend || true",
-              "docker rm frontend || true",
-              "[ ! -f /home/ec2-user/db.json ] && echo '\''{}'\'' > /home/ec2-user/db.json",
-              "cd /home/ec2-user && VERSION=${{ steps.version.outputs.VERSION }} docker-compose -f docker-compose.frontend.yml up -d frontend"
-            ]}'
+          docker build -t $ECR_REGISTRY/$REPO:${{ steps.version.outputs.VERSION }} ./front_despacho
+          docker push $ECR_REGISTRY/$REPO:${{ steps.version.outputs.VERSION }}
+
+      - name: Configurar kubectl
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ secrets.AWS_REGION }} \
+            --name despacho-cluster
+
+      - name: Desplegar en EKS (Manteniendo Estructura)
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          # Reemplaza la imagen vieja por la nueva en el manifiesto k8s respetando la sangría y estructura
+          sed -i "s|image: .*despacho-frontend:.*|image: $ECR_REGISTRY/despacho-frontend:$VERSION|g" k8s/backends-k8s.yaml
+          
+          # Aplica el manifiesto completo de forma declarativa
+          kubectl apply -f k8s/backends-k8s.yaml
+          kubectl rollout status deployment/despacho-frontend --timeout=120s

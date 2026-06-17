@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   despacho-backend:
-    image: dockermasterluka/despachos-backend:${VERSION:-v1}
+    image: 992382689365.dkr.ecr.us-east-1.amazonaws.com/despachos-backend:latest
     container_name: despacho-backend
     ports:
       - "8081:8081"
@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
 
   ventas-backend:
-    image: dockermasterluka/ventas-backend:${VERSION:-v1}
+    image: 992382689365.dkr.ecr.us-east-1.amazonaws.com/ventas-backend:latest
     container_name: ventas-backend
     ports:
       - "8080:8080"
