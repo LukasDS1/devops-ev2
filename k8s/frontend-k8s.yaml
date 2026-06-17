@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: despacho-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: despacho-frontend
+  template:
+    metadata:
+      labels:
+        app: despacho-frontend
+    spec:
+      containers:
+        - name: despacho-frontend
+          image: 992382689365.dkr.ecr.us-east-1.amazonaws.com/despacho-frontend:latest
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: despacho-frontend-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: despacho-frontend
+  ports:
+    - port: 80
+      targetPort: 3000

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-despacho
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-despacho
+  template:
+    metadata:
+      labels:
+        app: mysql-despacho
+    spec:
+      containers:
+        - name: mysql-despacho
+          image: 992382689365.dkr.ecr.us-east-1.amazonaws.com/mysql-db:8
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "innovatech2025"
+            - name: MYSQL_DATABASE
+              value: "despacho_db"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: despacho-db-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: despacho-db-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-despacho
+spec:
+  selector:
+    app: mysql-despacho
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-ventas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-ventas
+  template:
+    metadata:
+      labels:
+        app: mysql-ventas
+    spec:
+      containers:
+        - name: mysql-ventas
+          image: 992382689365.dkr.ecr.us-east-1.amazonaws.com/mysql-db:8
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "innovatech2025"
+            - name: MYSQL_DATABASE
+              value: "ventas_db"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: ventas-db-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: ventas-db-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-ventas
+spec:
+  selector:
+    app: mysql-ventas
+  ports:
+    - port: 3306
+      targetPort: 3306
