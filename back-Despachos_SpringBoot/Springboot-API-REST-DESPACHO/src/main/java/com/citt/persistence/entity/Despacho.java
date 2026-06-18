@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-//trigger test 9
-
+//test 20
 @Entity
 @Data
 @AllArgsConstructor
