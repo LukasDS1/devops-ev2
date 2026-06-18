@@ -1,6 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: despacho-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: despacho-frontend
+  template:
+    metadata:
+      labels:
+        app: despacho-frontend
+    spec:
+      containers:
+        - name: despacho-frontend
+          image: 992382689365.dkr.ecr.us-east-1.amazonaws.com/despacho-frontend:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "200m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: despacho-frontend-svc
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-033317af38fe69f42,subnet-0e82ecfc55906d977
+spec:
+  type: LoadBalancer
+  selector:
+    app: despacho-frontend
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: despacho-backend
 spec:
   replicas: 1
