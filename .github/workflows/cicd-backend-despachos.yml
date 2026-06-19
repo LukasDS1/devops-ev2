@@ -48,9 +48,9 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
-          # Reemplaza la imagen vieja por la nueva en el manifiesto k8s respetando la sangría y estructura
+          # Reemplaza la imagen vieja por la nueva en el manifiesto k8s 
           sed -i "s|image: .*despachos-backend:.*|image: $ECR_REGISTRY/despachos-backend:$VERSION|g" k8s/backends-k8s.yaml
           
-          # Aplica el manifiesto completo de forma declarativa
+          #Aplica el manifiesto completo de forma declarativa
           kubectl apply -f k8s/backends-k8s.yaml
           kubectl rollout status deployment/despacho-backend --timeout=120s
